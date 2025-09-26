@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Univen Campus Lost & Found</title>
+  <style>
+    :root {
+      --primary: #004080;
+      --secondary: #0055aa;
+      --muted: #666;
+      --bg: #f7f7f7;
+      --white: #fff;
+      --border: #eef2ff;
+      --overlay: rgba(0, 0, 0, 0.6);
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: #222;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+    }
+    header h1 { margin: 0; }
+    nav { margin-left: auto; display: flex; gap: .6rem; }
+    nav a {
+      text-decoration: none;
+      padding: .5rem 1rem;
+      border-radius: 5px;
+      font-size: 14px;
+      border: 1px solid white;
+      color: white;
+    }
+    nav a:hover { background: white; color: var(--primary); }
+
+    main.container { padding: 2rem; }
+    .hero-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .hero-card {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .headline { font-size: 20px; margin: 0 0 1rem; }
+    .search { display: flex; margin-bottom: 1rem; }
+    .search input {
+      flex: 1; padding: .6rem;
+      border: 1px solid #ccc; border-radius: 5px 0 0 5px;
+    }
+    .search button {
+      background: var(--primary); color: white;
+      border: none; padding: .6rem 1rem;
+      border-radius: 0 5px 5px 0; cursor: pointer;
+    }
+    .actions { display: flex; gap: 1rem; margin-bottom: 1rem; }
+    .action-cta {
+      flex: 1; text-align: center; padding: .8rem;
+      border-radius: 6px; background: var(--primary);
+      color: white; text-decoration: none; font-weight: bold;
+      cursor: pointer;
+    }
+    .action-cta:hover { background: var(--secondary); }
+    .recent .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-top: 1rem;
+    }
+    .card {
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .card img {
+      max-width: 100%; height: 120px;
+      object-fit: cover; border-radius: 6px; margin-bottom: 8px;
+    }
+    footer { text-align: center; margin-top: 2rem; padding: 1.5rem; font-size: 14px; color: var(--muted); }
+
+   
+    .form-container {
+      display: none;
+      background: dimgray;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      width: 400px;
+      margin: auto;
+      color: white;
+    }
+    .form-container label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    .form-container input, .form-container select, .form-container textarea {
+      width: 100%; padding: 8px; margin-bottom: 10px;
+      border-radius: 5px; border: none;
+    }
+    .blue-box {
+      background-color: #e3f2fd; color: black;
+      border: 1px solid #90caf9;
+      padding: 10px; border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .form-buttons {
+      display: flex; justify-content: space-between;
+    }
+    .form-buttons input {
+      width: 48%; padding: 10px; border: none;
+      border-radius: 5px; cursor: pointer; font-weight: bold;
+    }
+    .form-buttons .submit { background: #4CAF50; color: white; }
+    .form-buttons .reset { background: #f44336; color: white; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: var(--overlay);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+    }
+    .modal-content h2 {
+        color: var(--primary);
+        margin-top: 0;
+    }
+    .modal-content label {
+        font-weight: bold; display: block; margin: 10px 0 5px;
+    }
+    .modal-content input, .modal-content textarea {
+        width: 100%; padding: 8px; margin-bottom: 10px;
+        border-radius: 5px; border: 1px solid #ccc;
+    }
+    .close-btn {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close-btn:hover, .close-btn:focus {
+      color: black; text-decoration: none; cursor: pointer;
+    }
+
+    @media(max-width:768px){ .hero-grid{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex;align-items:center;">
+      <h1>Univen Campus Lost & Found</h1>
+      <nav>
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('lostForm')">Report Lost</a>
+        <a href="#" onclick="showPage('foundForm')">Report Found</a>
+        <a href="#" onclick="renderMyItems()">My Items</a>
+        <a href="trialnerror.html">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <main class="container" id="homePage">
+    <div class="hero-grid">
+      <div class="hero-card">
+        <h2 class="headline">Search or Report</h2>
+        <div class="search">
+          <input type="search" id="searchBox" placeholder="Search items...">
+          <button onclick="searchItems()">Search</button>
+        </div>
+        <div class="actions">
+          <div class="action-cta" onclick="showPage('lostForm')">Report Lost Item</div>
+          <div class="action-cta" onclick="showPage('foundForm')">Report Found Item</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="recent">
+      <h2>Recently Added Items</h2>
+      <div class="grid-cards" id="itemsGrid">
+      </div>
+    </section>
+
+    <div style="text-align: center; margin-top: 2rem; display: flex; justify-content: center; gap: 1rem;">
+      <a class="action-cta" href="About.html" style="flex: 0 1 auto; padding: 0.8rem 2rem;">About Us</a>
+      <a class="action-cta" href="contactUS.html" style="flex: 0 1 auto; padding: 0.8rem 2rem;">Contact Us</a>
+    </div>
+
+    <div id="successMessage" style="display:none; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; font-weight: bold;">
+      Item successfully reported! Redirecting...
+    </div>
+
+    <footer>
+      <div>University of Venda • Open Mon–Fri 08:00–17:00</div>
+      <div style="margin-top:6px">© <span id="year"></span> Univen Campus Lost & Found</div>
+    </footer>
+  </main>
+  <!-- LOST FORM -->
+  <div class="form-container" id="lostForm">
+    <h2>Lost Item Report Form</h2>
+    <form onsubmit="submitItem(event,'lost')">
+      <div class="blue-box">
+        <label>Item Lost:</label>
+        <input type="text" id="lostName" required>
+      </div>
+      <div class="blue-box">
+        <label>Category:</label>
+        <select id="lostCategory" required>
+          <option value="">Select</option>
+          <option>Electronics</option>
+          <option>Book & Stationery</option>
+          <option>Cards & IDs</option>
+          <option>Clothing & Accessories</option>
+          <option>Bags & Cases</option>
+          <option>Documents</option>
+          <option>Personal items</option>
+          <option>Keys</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="blue-box">
+        <label>Date Lost:</label>
+        <input type="date" id="lostDate">
+      </div>
+      <div class="blue-box">
+        <label>Location Lost:</label>
+        <input type="text" id="lostLocation">
+      </div>
+      <div class="blue-box">
+        <label>Student Number:</label>
+        <input type="text" id="lostStudent">
+      </div>
+      <div class="blue-box">
+        <label>Description:</label>
+        <textarea id="lostDesc" rows="3" maxlength="1000"></textarea>
+      </div>
+      <div class="blue-box">
+        <label>Upload Image:</label>
+        <input type="file" id="lostPhoto" accept="image/*">
+      </div>
+      <div class="form-buttons">
+        <input type="submit" class="submit" value="Submit">
+      </div>
+    </form>
+  </div>
+
+  <!-- FOUND FORM -->
+  <div class="form-container" id="foundForm">
+    <h2>Found Item Report Form</h2>
+    <form onsubmit="submitItem(event,'found')">
+      <div class="blue-box">
+        <label>Item Found:</label>
+        <input type="text" id="foundName" required>
+      </div>
+      <div class="blue-box">
+        <label>Category:</label>
+        <select id="foundCategory" required>
+          <option value="">Select</option>
+          <option>Electronics</option>
+          <option>Book & Stationery</option>
+          <option>Cards & IDs</option>
+          <option>Clothing & Accessories</option>
+          <option>Bags & Cases</option>
+          <option>Documents</option>
+          <option>Personal items</option>
+          <option>Keys</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="blue-box">
+        <label>Date Found:</label>
+        <input type="date" id="foundDate">
+      </div>
+      <div class="blue-box">
+        <label>Location:</label>
+        <input type="text" id="foundLocation">
+      </div>
+      <div class="blue-box">
+        <label>Description:</label>
+        <textarea id="foundDesc" rows="3" maxlength="1000"></textarea>
+      </div>
+      <div class="blue-box">
+        <label>Upload Image:</label>
+        <input type="file" id="foundPhoto" accept="image/*">
+      </div>
+
+      <div class="form-buttons">
+        <input type="submit" class="submit" value="Submit">
+      </div>
+    </form>
+  </div>
+
+  <!-- Claim Modal -->
+  <div id="claimModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeClaimModal()">&times;</span>
+      <h2>Claim Item</h2>
+      <form id="claimForm" onsubmit="submitClaim(event)">
+        <input type="hidden" id="claimItemIndex">
+        <label for="claimantId">Your 13-digit ID Number:</label>
+        <input type="text" id="claimantId" required pattern="\d{13}" title="Please enter exactly 13 digits.">
+        
+        <label for="claimantStudentNumber">Your 8-digit Student Number:</label>
+        <input type="text" id="claimantStudentNumber" required pattern="\d{8}" title="Please enter exactly 8 digits.">
+
+        <label for="claimantDescription">Provide a detailed description of the item:</label>
+        <textarea id="claimantDescription" rows="4" required maxlength="1000"></textarea>
+
+        <input type="submit" class="submit" value="Submit Claim">
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    
+    let items = JSON.parse(localStorage.getItem('campusItems')) || [];
+
+  
+    function saveItems() {
+      
+      localStorage.setItem('campusItems', JSON.stringify(items));
+    }
+
+    function showPage(page) {
+      document.getElementById("homePage").style.display = page === "home" ? "block" : "none";
+      document.getElementById("lostForm").style.display = page === "lostForm" ? "block" : "none";
+      document.getElementById("foundForm").style.display = page === "foundForm" ? "block" : "none";
+    }
+
+    function submitItem(event, type) {
+      event.preventDefault();
+      const name = document.getElementById(type + "Name").value;
+      const category = document.getElementById(type + "Category").value;
+      const date = document.getElementById(type + "Date").value;
+      const location = document.getElementById(type + "Location").value;
+      const fileInput = document.getElementById(type + "Photo");
+      const file = fileInput.files[0];
+
+      let student = "", desc = "";
+      if (type === "lost") {
+        student = document.getElementById("lostStudent").value;
+        desc = document.getElementById("lostDesc").value;
+      } else if (type === "found") {
+        desc = document.getElementById("foundDesc").value;
+      }
+
+      const processSubmit = (imgSrc = "") => {
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        const newItem = { name, category, date, location, imgSrc, type, student, desc, claimed: 'unclaimed', claimantId: null, claimantStudentNumber: null, claimantDescription: null, finderId: type === 'found' ? loggedInUser : null };
+        items.unshift(newItem);
+        saveItems();
+        renderItems();
+        const successMsgDiv = document.getElementById("successMessage");
+        successMsgDiv.style.display = "block";
+        setTimeout(() => {
+          successMsgDiv.style.display = "none";
+          showPage("home");
+        }, 2000); 
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => processSubmit(e.target.result);
+        reader.readAsDataURL(file);
+      } else {
+        processSubmit(); 
+      }
+    }
+
+    function renderItems(filter = "", itemSubset = null) {
+      const loggedInUser = sessionStorage.getItem('loggedInUser');
+      const grid = document.getElementById("itemsGrid");
+      grid.innerHTML = "";
+
+      const sourceItems = itemSubset || items;
+      let filteredItems = sourceItems.filter(item => item.name.toLowerCase().includes(filter.toLowerCase()));
+
+      
+      if (!itemSubset) {
+          filteredItems = filteredItems.filter(item => item.type === 'found' || item.type === 'lost');
+      }
+
+      if (filteredItems.length === 0) {
+          grid.innerHTML = '<p>No items match your criteria.</p>';
+      }
+      filteredItems.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        if(item.imgSrc) {
+          const img = document.createElement("img");
+          img.src = item.imgSrc;
+          card.appendChild(img);
+        }
+        const originalIndex = items.indexOf(item); 
+        let html = `<h3>${item.name}</h3>
+          <p><b>${item.type==="lost"?"Lost":"Found"}</b> in ${item.location || "Unknown"} — ${item.date || "N/A"}</p>
+          <p><i>Category:</i> ${item.category}</p>
+          <p><i>Description:</i> ${item.desc || "N/A"}</p>`;
+        
+        if(item.type==="lost"){
+          html += `<p><i>Student Number:</i> ${item.student || "N/A"}</p>
+                   <p><i>Description:</i> ${item.desc || "N/A"}</p>`;
+        } else {
+          if(item.claimed === 'claimed'){
+            html += `<p style="color:green;font-weight:bold;">Claimed & Collected</p>`;
+          } else if (item.claimed === 'pending') {
+            html += `<p style="color:orange;font-weight:bold;">Pending Verification</p>`;
+          } else if (item.claimed === 'approved') {
+           
+            if (loggedInUser && loggedInUser === item.claimantStudentNumber) {
+                html += `<p style="color:blue;font-weight:bold;">Approved for Collection</p>
+                         <p style="font-size:12px;">Please collect at Maintenance with your ID and Student Card for verification.</p>`;
+            } else {
+                
+                html += `<button onclick="openClaimModal(${originalIndex})">Claim</button>`;
+            }
+          } else {
+            html += `<button onclick="openClaimModal(${originalIndex})">Claim</button>`;
+          }
+        }
+        card.innerHTML += html;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderMyItems() {
+        const loggedInUser = sessionStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            return alert("Please log in to see your items.");
+        }
+        const myItems = items.filter(item => 
+            (item.type === 'lost' && item.student === loggedInUser) || 
+            (item.finderId === loggedInUser) || 
+            (item.claimantStudentNumber === loggedInUser) 
+        );
+        renderItems("", myItems);
+    }
+
+    function openClaimModal(index) {
+        document.getElementById('claimItemIndex').value = index;
+        document.getElementById('claimModal').style.display = 'block';
+    }
+
+    function closeClaimModal() {
+        document.getElementById('claimModal').style.display = 'none';
+        document.getElementById('claimForm').reset();
+    }
+
+    function submitClaim(event) {
+      event.preventDefault();
+      const index = document.getElementById('claimItemIndex').value;
+      const id = document.getElementById('claimantId').value;
+      const student = document.getElementById('claimantStudentNumber').value;
+      const description = document.getElementById('claimantDescription').value;
+
+     
+      if (!/^\d{13}$/.test(id)) return alert("Invalid ID. Please enter exactly 13 digits.");
+      if (!/^\d{8}$/.test(student)) return alert("Invalid Student Number. Please enter exactly 8 digits.");
+
+      alert("Claim submitted for verification. The admin will review your details. Please bring your ID and Student Card for collection upon approval.");
+      items[index].claimed = 'pending';
+      items[index].claimantId = id;
+      items[index].claimantStudentNumber = student;
+      items[index].claimantDescription = description;
+      saveItems(); 
+      renderItems();
+      closeClaimModal();
+    }
+
+    function searchItems() {
+      const query = document.getElementById("searchBox").value;
+      renderItems(query);
+    }
+     function setDateConstraints() {
+        const today = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+        const maxDate = today.toISOString().split('T')[0];
+        const minDate = oneYearAgo.toISOString().split('T')[0];
+
+        ['lostDate', 'foundDate'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.setAttribute('max', maxDate);
+                el.setAttribute('min', minDate);
+            }
+        });
+    }
+    showPage("home");
+    renderItems();
+    setDateConstraints(); 
+  </script>
+</body>
+</html>

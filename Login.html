@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log-in Using HTML,JavaScpiptand CSS</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+       
+        .login-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.2);
+            width: 380px;
+            text-align: center;
+        }
+
+        .login-form h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #145da0;
+        }
+
+        .login-form .image img {
+            margin-bottom: 15px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #145da0;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #0e4475;
+        }
+
+        .account {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .account a {
+            color: #145da0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .account a:hover {
+            text-decoration: underline;
+        }
+        .signup-form, .reset-form {
+            display: none;
+        }
+
+        .active-form {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+ 
+    <div class="login-form active-form" id="loginForm">
+        <h1>Lost and Found</h1>
+        <div class="image">
+            <img src="logo.jpg" alt="University of Venda logo" height="200px" width="200px"> 
+        </div>
+        <div class="container">
+            <div class="main">
+                <div class="content">
+                    <h2>Login</h2>
+                    <form id="login">
+                        <input type="text" name="username" placeholder="Student Number / Admin ID" required autofocus>
+                        <input type="password" name="pin" placeholder="Pin" required>
+                        <p class="text">(5 numeric digits. Do not start with a 0).</p>
+                        <div class="button-row">
+                            <button class="btn" type="submit">Log in</button>
+                            <button class="btn" type="button" onclick="showForm('resetForm')">Forgot Pin</button>
+                        </div>
+                    </form> 
+                    <p class="account">Don't have an account? <a href="#" onclick="showForm('signupForm')">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+    <div class="login-form signup-form" id="signupForm">
+        <h1>Register</h1>
+        <form id="signup">
+            <input type="text" name="studentNumber" placeholder="Student Number" required>
+            <input type="password" name="pin" placeholder="Access Pin" required>
+            <p class="text">(5 numeric digits. Do not start with a 0).</p>
+            <button class="btn" type="submit">Register</button>
+        </form>
+        <p class="account">Already have an account? <a href="#" onclick="showForm('loginForm')">Login</a></p>
+    </div>
+
+   
+    <div class="login-form reset-form" id="resetForm">
+        <h1>Reset Pin</h1>
+        <form id="reset">
+            <input type="text" name="studentNumber" placeholder="Student Number" required>
+            <input type="password" name="newPin" placeholder="New Access Pin" required>
+            <p class="text">(5 numeric digits. Do not start with a 0).</p>
+            <button class="btn" type="submit">Reset Pin</button>
+        </form>
+        <p class="account">Remembered your pin? <a href="#" onclick="showForm('loginForm')">Login</a></p>
+    </div>
+
+    <script>
+        function showForm(formId) {
+            document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active-form'));
+            document.getElementById(formId).classList.add('active-form');
+        }
+        const users = JSON.parse(localStorage.getItem('campusUsers')) || {};
+        function saveUsers() {
+            localStorage.setItem('campusUsers', JSON.stringify(users));
+        }
+
+        document.getElementById('signup').addEventListener('submit', function(e){
+            e.preventDefault();
+            const studentNumber = this.studentNumber.value;
+            const pin = this.pin.value;
+
+            if (!/^\d{8}$/.test(studentNumber)) {
+                return alert('Student Number must be exactly 8 digits.');
+            }
+            if (!/^\d{5}$/.test(pin)) {
+                return alert('Pin must be exactly 5 digits.');
+            }
+
+            if (users[studentNumber]) {
+                return alert('This Student Number is already registered.');
+            }
+            users[studentNumber] = pin;
+            saveUsers();
+            alert('Registration successful!');
+            showForm('loginForm');
+        });
+
+        document.getElementById('login').addEventListener('submit', function(e){
+            e.preventDefault();
+            const studentNumber = this.username.value;
+            const pin = this.pin.value;
+
+           
+            if (studentNumber === 'admin01' && pin === '11111') {
+                alert('Admin login successful! Redirecting to the admin dashboard...');
+                window.location.href = 'admin.html';
+                return; 
+            }
+
+            if (!/^\d{8}$/.test(studentNumber)) {
+                return alert('Student Number must be exactly 8 digits.');
+            }
+            if (!/^\d{5}$/.test(pin)) {
+                return alert('Pin must be exactly 5 digits.');
+            }
+
+            if(users[studentNumber] && users[studentNumber] === pin){
+                alert('Login successful! Redirecting to the main application...');
+                sessionStorage.setItem('loggedInUser', studentNumber); 
+                window.location.href = 'combination.html';
+            } else {
+                alert('Incorrect Student Number or Pin!');
+            }
+        });
+
+        document.getElementById('reset').addEventListener('submit', function(e){
+            e.preventDefault();
+            const studentNumber = this.studentNumber.value;
+            const newPin = this.newPin.value;
+
+            if (!/^\d{8}$/.test(studentNumber)) {
+                return alert('Student Number must be exactly 8 digits.');
+            }
+            if (!/^\d{5}$/.test(newPin)) {
+                return alert('New Pin must be exactly 5 digits.');
+            }
+
+            if(users[studentNumber]){
+                users[studentNumber] = newPin;
+                saveUsers();
+                alert('Pin reset successful!');
+                showForm('loginForm');
+            } else {
+                alert('Student Number not found!');
+            }
+        });
+    </script>
+</body>
+</html>

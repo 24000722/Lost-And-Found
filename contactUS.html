@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact US</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #f4f4f4; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.2);
+    width: 380px;
+    text-align: center;
+}
+
+.login-form h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #145da0;
+}
+
+.login-form h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+.login-form .main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+p {
+    font-size: 14px;
+    color: #666;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border 0.3s ease;
+}
+
+input:focus {
+    border-color: #145da0;
+    outline: none;
+}
+
+
+button, .btn {
+    background: #145da0;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+
+.btn:hover, button:hover {
+    background: #0e4475;
+}
+
+.container{
+ min-height: 100vh;
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ background: #fff; 
+ max-width: 670px;
+ border-radius: 15px;
+ box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+ padding: 30px;
+ flex-wrap: wrap;
+}
+.containerform{
+    width: 670px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    border-radius: 15px;
+    background: #666;
+    background: var(--primary, #004080);
+    backdrop-filter:blur(30px);
+    flex-wrap:wrap;
+
+}
+.container form h1{
+    color: #145da0; 
+    font-weight: 700;
+    line-height: 2;
+    margin-top: 20px;
+    width: 500px;
+    text-align:center;
+}
+.container form input{
+    width: 300px;
+    height: 50px;
+    padding-left:10px;
+    outline:none;
+    border:none;
+    font-size:  20px;
+    margin-bottom:  10px;
+    background: #f0f0f0; 
+    border: 1px solid #ccc;
+    color:#333;
+    border-radius: 5px;
+}
+.container form input::placeholder{
+    color:#888;
+}
+
+.container form #lastName,
+.container form #mobile{
+    margin-left: 0;
+}
+
+.container form .input-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+.container form .input-row input {
+    flex: 1;
+}
+
+.container form h4{
+    color:#333;
+    font-weight: 300;
+    width: 600px;
+    margin-top: 20px;
+}
+.container form textarea{
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color:#333;
+    font-weight: 200;
+    font-size: 20px;
+    padding: 10px;
+    outline:none;
+    width: 100%;
+    min-height: 90px;
+    max-height: 90px;
+    min-width: 620px;
+    max-width: 620px;
+}
+.container form h4{
+    font-size: 20px;
+}
+.container form #button{
+    background: #145da0; 
+    color: #fff;
+    border:none;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 24px;
+    width: 200px;
+    height: 60px;
+    padding: 0;
+    margin-bottom: 30px;
+    transition: 0.3s;
+}
+.container form #button:hover{
+    background: #0e4475;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="mailto:Lostandfound.campus@gmail.com" method="POST" enctype="text/plain">
+            <h1>Contact Us Form</h1>
+
+            <div class="input-row">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+            </div>
+
+            <div class="input-row">
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="text" id="mobile" name="mobile" placeholder="Mobile" required>
+            </div>
+               
+            <script>
+document.querySelector("form").addEventListener("submit", function(e) {
+  e.preventDefault(); 
+
+ 
+  const firstName = document.getElementById("firstName").value;
+  const lastName  = document.getElementById("lastName").value;
+  const email     = document.getElementById("email").value;
+  const mobile    = document.getElementById("mobile").value;
+  const message   = document.getElementById("message").value;
+
+ 
+  const body =
+    "First Name: " + firstName + "\n" + "Last Name: " + lastName + "\n" +"Email: " + email + "\n" +"Mobile: " + mobile + "\n\n" +
+    "Message:\n" + message;
+
+  
+  window.location.href = 
+    "mailto:Lostandfound.campus@gmail.com?subject=New Contact Form Submission&body=" + encodeURIComponent(body);
+});
+</script>
+            <label for="message">Write your message below</label>
+            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+
+            <div style="width:100%; text-align:center;">
+                <button id="button" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+   
+</body>
+</html>

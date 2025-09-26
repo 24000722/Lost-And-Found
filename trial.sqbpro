@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="trial.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2552"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="items" custom_title="0" dock_id="1" table="4,5:mainitems"/><dock_state state="000000ff00000000fd0000000100000002000003e40000021efc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000003e40000011800ffffff000003e40000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="admin" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="60"/><column index="2" value="117"/><column index="3" value="218"/><column index="4" value="70"/><column index="5" value="156"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="categories" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="1" mode="0"/></sort><column_widths><column index="1" value="74"/><column index="2" value="282"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="claims" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="55"/><column index="2" value="53"/><column index="3" value="69"/><column index="4" value="95"/><column index="5" value="187"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="items" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="51"/><column index="2" value="101"/><column index="3" value="156"/><column index="4" value="46"/><column index="5" value="187"/><column index="6" value="156"/><column index="7" value="74"/><column index="8" value="76"/><column index="9" value="52"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="messages" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="74"/><column index="2" value="65"/><column index="3" value="72"/><column index="4" value="53"/><column index="5" value="86"/><column index="6" value="50"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="notifications" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="89"/><column index="2" value="52"/><column index="3" value="57"/><column index="4" value="49"/><column index="5" value="68"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="sqlite_sequence" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="46"/><column index="2" value="29"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="users" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="50"/><column index="2" value="109"/><column index="3" value="140"/><column index="4" value="70"/><column index="5" value="156"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">-- Dropping existing table to avoid errors
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS claims;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS admin;
+DROP TABLE IF EXISTS users;
+
+-- Admin accounts 
+CREATE TABLE admin (
+    admin_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name   VARCHAR(100) NOT NULL,
+    email       VARCHAR(100) UNIQUE NOT NULL,
+    password    VARCHAR(255) NOT NULL,          -- store hashed password
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Users table with password
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Categories table
+CREATE TABLE categories (
+    category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Items table
+CREATE TABLE items (
+    item_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    title        VARCHAR(100) NOT NULL,
+    description  TEXT,
+    status       VARCHAR(100) NOT NULL,                 -- 'lost' or 'found'
+    location     VARCHAR(100),
+    date_posted  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    image_path   TEXT,                           
+    category_id  INTEGER,
+    user_id      INTEGER,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    FOREIGN KEY (user_id)  REFERENCES users(user_id)
+);
+
+-- Messages for direct chat between users about a specific item
+CREATE TABLE messages (
+    message_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id   INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    item_id     INTEGER,
+    message_text TEXT NOT NULL,
+    sent_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id)   REFERENCES users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id),
+    FOREIGN KEY (item_id)     REFERENCES items(item_id)
+);
+
+-- Claims for tracking requests to claim a found item
+CREATE TABLE claims (
+    claim_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+    item_id     INTEGER NOT NULL,
+    claimer_id  INTEGER NOT NULL,
+    status      VARCHAR(20) DEFAULT 'pending',   --(pending, approved, rejected)
+    claim_date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (item_id)    REFERENCES items(item_id),
+    FOREIGN KEY (claimer_id) REFERENCES users(user_id)
+);
+
+-- Notifications for store in-app/email alerts
+CREATE TABLE notifications (
+    notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id         INTEGER NOT NULL,
+    message         TEXT NOT NULL,
+    is_read         INTEGER DEFAULT 0,          
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+--INSERT admin details
+INSERT INTO admin (full_name, email, password) VALUES
+('Big boss Admin', 'admin@university.educations', 'admin123');
+
+-- Insert users with passwords
+INSERT INTO users (full_name, email, password) VALUES 
+('Ria Mutepe', 'vhatepe@example.com', 'Ria123'),
+('John spooky', 'spooks@example.com', 'john123');
+
+--INSERT categories
+INSERT INTO categories (name) VALUES
+('Electronics'),
+('Books &amp; Stationery'),
+('Cards &amp; IDs'),
+('Clothing &amp; Accessories'),
+('Bags &amp; Cases'),
+('Keys'),
+('Personal Items'),
+('Academic Equipment'),
+('other');
+
+-- Insert lost and found items linked to users
+INSERT INTO items (title, description, status, location, category_id, user_id)
+VALUES 
+('condom', 'Has initials inside', 'lost', 'E-BLOCK toilets', 1, 1), 
+('student card', 'an ugly picture', 'found', 'A-BLOCK[Lecture hall 7]', 2, 2);
+
+
+INSERT INTO messages (sender_id, receiver_id, item_id, message_text)
+VALUES (2, 1, 1, 'I think I found your calculator.');
+
+INSERT INTO claims (item_id, claimer_id, status)
+VALUES (1, 2, 'pending');
+
+INSERT INTO notifications (user_id, message)
+VALUES (1, 'Someone has requested to claim your found item.');
+
+-- View all lost items
+SELECT title, location
+FROM items
+WHERE status = 'lost';
+
+-- View all lost items
+SELECT title, location
+FROM items
+WHERE status = 'found';</sql><current_tab id="0"/></tab_sql></sqlb_project>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lost Item Report Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    form {
+      background: dimgray;       padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+  
+    .blue-box {
+      
+      background-color: #e3f2fd;
+      border: 1px solid #90caf9;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    input[type="submit"],
+    input[type="reset"] {
+      width: 48%;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    input[type="reset"] {
+      background-color: #f44336;
+      color: white;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    input[type="reset"]:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <h2>Lost Item Report Form</h2>
+
+    
+    <div class="blue-box">
+      <label for="itemName">Item Lost:</label>
+      <input type="text" id="itemName" name="itemName" required>
+    </div>
+
+    <div class="blue-box">
+    <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select a category</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Books & Stationery">Books & Stationery</option>
+        <option value="Cards and IDs">Cards & IDs</option>
+        <option value="Clothing">Clothing & Accessories</option>
+        <option value="Bags">Bags & Cases</option>
+        <option value="Personal Items">Personal items</option>
+        <option value="Documents">Documents</option>
+        <option value="Keys">Keys</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="blue-box">
+      <label for="dateLost">Date Lost:</label>
+      <input type="date" id="dateLost" name="dateLost">
+    </div>
+
+    
+    <div class="blue-box">
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location">
+    </div>
+    <div class="blue-box">
+        <label>Description:</label>
+        <textarea id="foundDesc" rows="3" maxlength="1000"></textarea>
+      </div>
+
+  
+    <div class="blue-box">
+      <label for="photo">Upload image (optional):</label>
+      <input type="file" id="photo" name="photo" accept="image/*">
+    </div>
+
+    <div style="display: flex; justify-content: space-between;">
+       <input type="submit" value="Submit">
+    </div>
+  </form>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+
+body, h1, h2, p {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+
+    background: linear-gradient(135deg, #4a90e2, #145da0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.2);
+    width: 380px;
+    text-align: center;
+}
+
+.login-form h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: #145da0;
+}
+
+.login-form h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.login-form .main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+p {
+    font-size: 14px;
+    color: #666;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border 0.3s ease;
+}
+
+input:focus {
+    border-color: #145da0;
+    outline: none;
+}
+
+button, .btn {
+    background: #145da0;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+
+.btn:hover, button:hover {
+    background: #0e4475;
+}
+
+

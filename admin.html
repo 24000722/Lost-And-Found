@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard </title>
+    <style>
+        :root {
+            --success: #28a745;
+            --warning: #ffc107;
+            --primary: #004080;
+            --secondary: #0055aa;
+            --danger: #dc3545;
+            --danger-hover: #c82333;
+            --bg: #f7f7f7;
+            --info: #17a2b8;
+            --white: #fff;
+            --border: #dee2e6;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: #222;
+        }
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 { margin: 0; }
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        main {
+            padding: 2rem;
+        }
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .table-container {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow-x: auto; 
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        thead tr {
+            background-color: #f2f2f2;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .status-claimed {
+            color: green;
+            font-weight: bold;
+        }
+        .status-pending {
+            color: #b5830e;
+            font-weight: bold;
+        }
+        .claimant-info {
+            font-size: 12px;
+            color: #555;
+        }
+        .status-unclaimed {
+            color: #6c757d;
+        }
+        .status-approved {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-delete:hover {
+            background: var(--danger-hover);
+        }
+        .btn-approve {
+            background: var(--success);
+            color: white;
+            border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px;
+        }
+        .btn-reject {
+            background: var(--warning);
+            color: #212529;
+            border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;
+        }
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .item-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <a href="trialnerror.html">Logout</a>
+    </header>
+
+    <main>
+        <h2>Manage Reported Items</h2>
+
+        <div class="table-container">
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Category</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Image</th>
+                        <th>Claimant Info</th>
+                        <th>Description</th>
+                        <th>Claimant's Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        let items = JSON.parse(localStorage.getItem('campusItems')) || [];
+
+        function saveItems() {
+            localStorage.setItem('campusItems', JSON.stringify(items));
+        }
+
+        function deleteItem(index) {
+            if (confirm(`Are you sure you want to delete "${items[index].name}"?`)) {
+                items.splice(index, 1); 
+                saveItems();
+                renderItems();
+            }
+        }
+
+        function approveClaim(index) {
+            if (confirm(`Approve this claim? The user will be instructed to collect the item at Maintenance for final verification.`)) {
+                items[index].claimed = 'approved';
+                saveItems();
+                renderItems();
+            }
+        }
+
+        function rejectClaim(index) {
+            if (confirm(`Are you sure you want to reject this claim?`)) {
+                items[index].claimed = 'unclaimed';
+                items[index].claimantId = null;
+                items[index].claimantStudentNumber = null;
+                items[index].claimantDescription = null;
+                saveItems();
+                renderItems();
+            }
+        }
+        function markAsCollected(index) {
+            items[index].claimed = 'claimed';
+            saveItems();
+            renderItems();
+        }
+
+        function markAsFound(index) {
+            if (confirm(`Are you sure you want to mark "${items[index].name}" as found? This will change its type and make it claimable.`)) {
+                items[index].type = 'found';
+                saveItems();
+                renderItems();
+            }
+        }
+
+        function renderItems() {
+            const tableBody = document.querySelector("#itemsTable tbody");
+            tableBody.innerHTML = ""; 
+
+            if (items.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="11" style="text-align:center;">No items have been reported yet.</td></tr>';
+                return;
+            }
+
+            items.forEach((item, index) => {
+                let statusHtml = '';
+                let claimantHtml = 'N/A';
+                let actionHtml = `<button class="btn-delete" onclick="deleteItem(${index})">Delete</button>`;
+                let imageHtml = item.imgSrc ? `<img src="${item.imgSrc}" alt="${item.name}" class="item-image">` : 'No Image';
+
+                if (item.type === 'found') {
+                    if (item.claimed === 'pending') {
+                        statusHtml = '<span class="status-pending">Pending</span>';
+                        claimantHtml = `<div class="claimant-info"><b>ID:</b> ${item.claimantId}<br><b>Std No:</b> ${item.claimantStudentNumber}</div>`;
+                        actionHtml = `
+                            <div class="action-group">
+                                <button class="btn-approve" onclick="approveClaim(${index})">Approve</button>
+                                <button class="btn-reject" onclick="rejectClaim(${index})">Reject</button>
+                            </div>`;
+                    } else if (item.claimed === 'claimed') {
+                        statusHtml = '<span class="status-claimed">Claimed & Collected</span>';
+                        claimantHtml = `<div class="claimant-info"><b>ID:</b> ${item.claimantId}<br><b>Std No:</b> ${item.claimantStudentNumber}</div>`;
+                    } else if (item.claimed === 'approved') {
+                        statusHtml = '<span class="status-approved">Approved</span>';
+                        claimantHtml = `<div class="claimant-info"><b>ID:</b> ${item.claimantId}<br><b>Std No:</b> ${item.claimantStudentNumber}</div>`;
+                        actionHtml = `<button class="btn-approve" onclick="markAsCollected(${index})">Mark as Collected</button>`;
+                    } else {
+                        statusHtml = '<span class="status-unclaimed">Unclaimed</span>';
+                    }
+                } else if (item.type === 'lost') {
+                    statusHtml = '<span class="status-unclaimed">Lost</span>';
+                    actionHtml = `
+                        <button class="btn-approve" style="background:var(--info);" onclick="markAsFound(${index})">Mark as Found</button>
+                        <button class="btn-delete" onclick="deleteItem(${index})">Delete</button>`;
+                }
+
+                const row = `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td>${item.type === 'lost' ? 'Lost' : 'Found'}</td>
+                        <td>${item.location || 'N/A'}</td>
+                        <td>${item.date || 'N/A'}</td>
+                        <td>${statusHtml || 'N/A'}</td>
+                        <td>${imageHtml}</td>
+                        <td>${claimantHtml}</td>
+                        <td>${item.desc || 'N/A'}</td>
+                        <td>${item.claimantDescription || 'N/A'}</td>
+                        <td>${actionHtml}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+        renderItems();
+    </script>
+</body>
+</html>
